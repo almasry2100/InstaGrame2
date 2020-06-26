@@ -1,12 +1,19 @@
 package com.example.instagrameclone;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +21,11 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ProfileTab extends Fragment {
+
+    private EditText edtProfileName,edtProfileBio,edtProfileProfession,
+            edtProfileHobies,edtProfileFavoriteSport;
+    private Button btnProfileUpdateInfo;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +71,78 @@ public class ProfileTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate( R.layout.fragment_profile_tab, container, false );
+        View view= inflater.inflate( R.layout.fragment_profile_tab, container, false );
+
+        edtProfileName=view.findViewById( R.id.edtProfileName );
+        edtProfileBio=view.findViewById( R.id.edtProfileBio);
+        edtProfileProfession=view.findViewById( R.id.edtProfileProfession );
+        edtProfileHobies=view.findViewById( R.id.edtProfileHobies);
+        edtProfileFavoriteSport=view.findViewById( R.id.edtProfileFavoriteSport );
+
+        btnProfileUpdateInfo=view.findViewById( R.id.btnProfileUpdateInfo );
+        final ParseUser parsuser=ParseUser.getCurrentUser();
+        if (parsuser.get( "profileName" )==null ){
+            edtProfileName.setText( "");
+        }else {
+            edtProfileName.setText( parsuser.get( "profileName" ).toString() );
+
+        }
+        if (parsuser.get( "profileBio" )==null ){
+            edtProfileBio.setText( "");
+        }else {
+            edtProfileBio.setText( parsuser.get( "profileBio" ).toString() );
+
+        }
+        if (parsuser.get( "profileProfession" )==null ){
+            edtProfileProfession.setText( "");
+        }else {
+            edtProfileProfession.setText( parsuser.get( "profileProfession" ).toString() );
+
+        }
+        if (parsuser.get( "profileHobies" )==null ){
+            edtProfileHobies.setText( "");
+        }else {
+            edtProfileHobies.setText( parsuser.get( "profileHobies" ).toString() );
+
+        }
+        if (parsuser.get( "profileFavoriteSport" )==null ){
+            edtProfileFavoriteSport.setText( "");
+        }else {
+            edtProfileFavoriteSport.setText( parsuser.get( "profileFavoriteSport" ).toString() );
+
+        }
+
+
+
+
+
+
+        btnProfileUpdateInfo.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+          parsuser.put( "profileName",edtProfileName.getText().toString() );
+          parsuser.put( "profileBio",edtProfileBio.getText().toString() );
+          parsuser.put( "profileProfession",edtProfileProfession.getText().toString() );
+          parsuser.put( "profileHobies",edtProfileHobies.getText().toString() );
+          parsuser.put( "profileFavoriteSport",edtProfileFavoriteSport.getText().toString() );
+
+          parsuser.saveInBackground( new SaveCallback() {
+              @Override
+              public void done(ParseException e) {
+                  if (e==null){
+
+                      FancyToast.makeText( getContext(),"info updated ", FancyToast.LENGTH_SHORT, FancyToast.INFO, true ).show();
+
+                  }else {
+                      FancyToast.makeText( getContext(), e.getMessage(), Toast.LENGTH_LONG,FancyToast.ERROR,true  ).show();
+
+                  }
+              }
+          } );
+            }
+        } );
+
+
+        return view;
     }
 }
